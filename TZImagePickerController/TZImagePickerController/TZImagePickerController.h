@@ -16,6 +16,11 @@
  原来xib确实会导致性能问题啊...大家也要注意了...
  */
 
+#define isDarkMode self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark
+#define UIColorBackground isDarkMode ? [UIColor colorWithRed:17/255 green:17/255 blue:18/255 alpha:1.0] : [UIColor whiteColor]
+#define UIColorContent isDarkMode ? [UIColor colorWithRed:232/255 green:232/255 blue:232/255 alpha:1.0] : [UIColor colorWithRed:76/255 green:76/255 blue:76/255 alpha:1.0]
+#define UIColorSecondaryTitle isDarkMode ? [UIColor colorWithRed:125/255 green:128/255 blue:132/255 alpha:1.0] : [UIColor colorWithRed:157/255 green:160/255 blue:165/255 alpha:1.0]
+
 #import <UIKit/UIKit.h>
 #import "TZAssetModel.h"
 #import "NSBundle+TZImagePicker.h"
