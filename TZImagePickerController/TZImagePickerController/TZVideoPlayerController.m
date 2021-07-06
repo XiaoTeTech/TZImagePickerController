@@ -22,6 +22,7 @@
     UIImage *_cover;
     NSString *_outputPath;
     NSString *_errorMsg;
+    UIActivityIndicatorView *_indicatorView;
     
     UIView *_toolBar;
     UIButton *_doneButton;
@@ -44,6 +45,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
     self.needShowStatusBar = ![UIApplication sharedApplication].statusBarHidden;
     self.view.backgroundColor = [UIColor blackColor];
     TZImagePickerController *tzImagePickerVc = (TZImagePickerController *)self.navigationController;
@@ -58,6 +60,12 @@
     [super viewWillAppear:animated];
     _originStatusBarStyle = [UIApplication sharedApplication].statusBarStyle;
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
+
+    _indicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    _indicatorView.hidesWhenStopped = YES;
+    [self.view addSubview:_indicatorView];
+    _indicatorView.center = self.view.center;
+    [_indicatorView startAnimating];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -69,6 +77,7 @@
 }
 
 - (void)configMoviePlayer {
+
     [[TZImageManager manager] getPhotoWithAsset:_model.asset completion:^(UIImage *photo, NSDictionary *info, BOOL isDegraded) {
         BOOL iCloudSyncFailed = !photo && [TZCommonTools isICloudSyncError:info[PHImageErrorKey]];
         self.iCloudErrorView.hidden = !iCloudSyncFailed;
@@ -77,6 +86,8 @@
             self->_doneButton.enabled = YES;
             self->_editButton.enabled = YES;
         }
+
+        [self->_indicatorView stopAnimating];
     }];
     [[TZImageManager manager] getVideoWithAsset:_model.asset completion:^(AVPlayerItem *playerItem, NSDictionary *info) {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -183,6 +194,8 @@
     if (tzImagePickerVc.videoPreviewPageDidLayoutSubviewsBlock) {
         tzImagePickerVc.videoPreviewPageDidLayoutSubviewsBlock(_playButton, _toolBar, _editButton, _doneButton);
     }
+
+    _indicatorView.center = self.view.center;
 }
 
 #pragma mark - Click Event
