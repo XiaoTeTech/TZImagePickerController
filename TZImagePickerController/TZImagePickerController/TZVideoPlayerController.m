@@ -19,7 +19,7 @@
     AVPlayerLayer *_playerLayer;
     UIButton *_playButton;
     UIImage *_cover;
-    
+    UIActivityIndicatorView *_indicatorView;
     UIView *_toolBar;
     UIButton *_doneButton;
     UIProgressView *_progress;
@@ -54,6 +54,12 @@
     [super viewWillAppear:animated];
     _originStatusBarStyle = [UIApplication sharedApplication].statusBarStyle;
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
+
+    _indicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    _indicatorView.hidesWhenStopped = YES;
+    [self.view addSubview:_indicatorView];
+    _indicatorView.center = self.view.center;
+    [_indicatorView startAnimating];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -72,6 +78,8 @@
             self->_cover = photo;
             self->_doneButton.enabled = YES;
         }
+
+        [self->_indicatorView stopAnimating];
     }];
     [[TZImageManager manager] getVideoWithAsset:_model.asset completion:^(AVPlayerItem *playerItem, NSDictionary *info) {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -162,6 +170,8 @@
     if (tzImagePickerVc.videoPreviewPageDidLayoutSubviewsBlock) {
         tzImagePickerVc.videoPreviewPageDidLayoutSubviewsBlock(_playButton, _toolBar, _doneButton);
     }
+
+    _indicatorView.center = self.view.center;
 }
 
 #pragma mark - Click Event
